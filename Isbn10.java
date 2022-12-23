@@ -14,6 +14,7 @@ class Isbn10 {
         if(isbn.length() != 10) {
             return FALSCHE_LAENGE;
         }
+
         for(int i = 0; i < 9; i++) {
             try {
                 res[i] = Integer.parseInt(isbn.substring(i, i+1)) * (10-i);
@@ -22,8 +23,7 @@ class Isbn10 {
                 return FALSCHES_ZEICHEN;
             }         
         }
-        tmp = (isbn.substring(9,9+1).equals("X")) ? 10 : 0;
-        res[9] = (tmp == 10) ? tmp : 0;
+        res[9] = (isbn.substring(9,9+1).equals("X")) ? 10 : 0;
         if(res[9] == 0) {
             try {
                 res[9] = Integer.parseInt(isbn.substring(9, 9+1));
@@ -32,7 +32,7 @@ class Isbn10 {
                 return FALSCHES_ZEICHEN;
             }
         }
-        tmp = 0;
+        
         for(int val : res) {
             tmp += val;
         }
