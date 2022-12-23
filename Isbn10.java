@@ -10,33 +10,50 @@ class Isbn10 {
 
         int[] res = new int[10];
         int tmp = 0;
+        char[] ca = new char[10];
 
-        if(isbn.length() != 10) {
-            return FALSCHE_LAENGE;
+        // purge -
+        for(char c : isbn.toCharArray()) {
+            if(c != '-') {
+                if(tmp > 9) {
+                    return FALSCHE_LAENGE;
+                }
+                ca[tmp] = c;
+                tmp++;
+            }
         }
 
+        // len check
+        if(ca[9] == '\0') {
+            return FALSCHE_LAENGE;
+        }
+        isbn = new String(ca);
+
+        // parse to int
         for(int i = 0; i < 9; i++) {
             try {
-                res[i] = Integer.parseInt(isbn.substring(i, i+1)) * (10-i);
+                res[i] = (Integer.parseInt(Character.toString(isbn.charAt(i)))) * (i+1);
             }
             catch(NumberFormatException e) {
                 return FALSCHES_ZEICHEN;
             }         
         }
-        res[9] = (isbn.substring(9,9+1).equals("X")) ? 10 : 0;
+        res[9] = (isbn.charAt(9) == 'X') ? 10 : 0;
         if(res[9] == 0) {
             try {
-                res[9] = Integer.parseInt(isbn.substring(9, 9+1));
+                res[9] = Integer.parseInt(Character.toString(isbn.charAt(9)));
             }
             catch(NumberFormatException e) {
                 return FALSCHES_ZEICHEN;
             }
         }
         
-        for(int val : res) {
-            tmp += val;
+        // checksum
+        tmp = 0;
+        for(int i = 0; i < 9; i++) {
+            tmp += res[i];
         }
-        return ((tmp % 11) == 0) ? OK : FALSCHE_PRUEFSUMME;
+        return ((tmp % 11) == res[9]) ? OK : FALSCHE_PRUEFSUMME;
     }
 
     public static void main(String args[]) {
@@ -47,21 +64,20 @@ class Isbn10 {
 
         switch (validityIsbn10(isbn)) {
             case OK:
-                System.out.println("ISBN is valid");
+                System.out.println("OK");
                 break;
             case FALSCHES_ZEICHEN:
-                System.out.println("ISBN contains a wrong character");
+                System.out.println("Fehler: Falsches Zeichen");
                 break;
             case FALSCHE_PRUEFSUMME:
-                System.out.println("ISBN checksum is wrong");
+                System.out.println("Fehler: Pruefziffer falsch");
                 break;
             case FALSCHE_LAENGE:
-                System.out.println("ISBN has the wrong length");
+                System.out.println("Fehler: Falsche Laenge");
                 break;
             default:
-                System.out.println("Something went wrong (entered default case)");
+                System.out.println("Fehler: intern");
                 break;
         }
-
     }
 }
